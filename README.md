@@ -42,8 +42,6 @@ recorder:
       - media_player.yun_yin_le  
 ```
 
-[完整配置文档](./docs/ "完整配置文档")
-
 ### 计划实现功能
 - [ ] 控制蓝牙设备切换
 
