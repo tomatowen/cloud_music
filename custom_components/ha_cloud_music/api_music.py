@@ -1,5 +1,6 @@
-import aiohttp, asyncio, json, re, os, uuid, math, urllib, threading, re
+import aiohttp, json, re, os, uuid, math, urllib, threading, re
 import http.cookiejar as HC
+from .shaonianzhentan import fetch_info
 from homeassistant.helpers.network import get_url
 
 # 全局请求头
@@ -131,13 +132,11 @@ class ApiMusic():
     # 获取重写向后的地址
     async def get_redirect_url(self, url):
         # 请求网页
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                result_url = str(response.url)
-                if result_url == 'https://music.163.com/404':
-                    return None
-                return result_url
-        return None
+        res = await fetch_info(url)
+        result_url = res['url']
+        if result_url == 'https://music.163.com/404':
+            return None
+        return result_url
 
     # 进行咪咕搜索，可以播放周杰伦的歌歌
     async def migu_search(self, songName, singerName):
