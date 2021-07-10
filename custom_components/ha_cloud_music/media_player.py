@@ -122,26 +122,24 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         用户ID：''' + mp.api_music.uid + '''
 
 -------------------------------------------------------------------''')
-################### 注册静态目录与接口网关 ###################    
-    local = hass.config.path("custom_components/ha_cloud_music/dist")
-    if os.path.isdir(local):
-        # 注册静态目录
-        hass.http.register_static_path(ROOT_PATH, local, False)
-        hass.http.register_static_path('/tts-local', hass.config.path("tts"), False)
-        hass.http.register_static_path('/media-local', hass.config.path("media/ha_cloud_music"), False)
-        hass.http.register_static_path(WEB_PATH, hass.config.path("custom_components/ha_cloud_music/local"), False)
-        # 注册网关接口
-        hass.http.register_view(ApiView)
-        # 注册菜单栏
-        hass.components.frontend.async_register_built_in_panel(
-            "iframe", NAME, ICON, DOMAIN,
-            { "url": ROOT_PATH + "/index.html?ver=" + VERSION
-            + "&show_mode=" + show_mode
-            + "&uid=" + mp.api_music.uid },
-            require_admin=False
-        )
-        # 添加状态卡片
-        hass.components.frontend.add_extra_js_url(hass, WEB_PATH + '/card/ha_cloud_music.js?v=' + VERSION)
+################### 注册静态目录与接口网关 ###################
+    # 注册静态目录
+    hass.http.register_static_path(ROOT_PATH, hass.config.path("custom_components/ha_cloud_music/dist"), False)
+    hass.http.register_static_path('/tts-local', hass.config.path("tts"), False)
+    hass.http.register_static_path('/media-local', hass.config.path("media/ha_cloud_music"), False)
+    hass.http.register_static_path(WEB_PATH, hass.config.path("custom_components/ha_cloud_music/local"), False)
+    # 注册网关接口
+    hass.http.register_view(ApiView)
+    # 注册菜单栏
+    hass.components.frontend.async_register_built_in_panel(
+        "iframe", NAME, ICON, DOMAIN,
+        { "url": ROOT_PATH + "/index.html?ver=" + VERSION
+        + "&show_mode=" + show_mode
+        + "&uid=" + mp.api_music.uid },
+        require_admin=False
+    )
+    # 添加状态卡片
+    hass.components.frontend.add_extra_js_url(hass, WEB_PATH + '/card/ha_cloud_music.js?v=' + VERSION)
     ################### 注册静态目录与接口网关 ###################
     return True   
 
@@ -190,13 +188,14 @@ class MediaPlayer(MediaPlayerEntity):
 
         _sound_mode_list = ['网页播放器']
             
+        mpd_host = config.get('mpd_host', '')
         # 如果是Docker环境，则不显示VLC播放器
-        if os.path.isfile("/.dockerenv") == True:
+        if os.path.isfile("/.dockerenv") == True and mpd_host != '':
             _sound_mode_list.append('MPD播放器')
         else:
             _sound_mode_list.append('VLC播放器')
             # 如果有配置mpd，则显示MPD播放器
-            if 'mpd_host' in config:
+            if mpd_host != '':
                 _sound_mode_list.append('MPD播放器')
 
         self._sound_mode_list = _sound_mode_list
