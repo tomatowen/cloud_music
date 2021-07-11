@@ -1,10 +1,12 @@
 import aiohttp
+from urllib.parse import urlparse
 
 # 获取HTTP请求信息
 async def fetch_info(url):
+    p = urlparse(url)
     headers = {
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36 Edg/91.0.864.48',
-        'referer': url
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+        'Referer': f'{p.scheme}//{p.netloc}'
     }
     async with aiohttp.ClientSession(headers=headers) as session:
         async with session.get(url) as response:
