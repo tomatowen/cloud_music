@@ -192,7 +192,7 @@ class ApiMusic():
                     "album": item['album']['name'],
                     "image": item['album']['artist']['img1v1Url']+"?param=300y300",
                     "duration": int(item['duration']) / 1000,
-                    "url": "https://music.163.com/song/media/outer/url?id=" + str(item['id']),
+                    "url": "https://music.163.com/song/media/outer/url?id=" + str(item['id']) + ".mp3",
                     "song": item['name'],
                     "singer": len(item['artists']) > 0 and item['artists'][0]['name'] or '未知'
                     }, songs)
@@ -280,7 +280,7 @@ class ApiMusic():
                 "album": item['al']['name'],
                 "image": item['al']['picUrl'],
                 "duration": int(item['dt']) / 1000,
-                "url": "https://music.163.com/song/media/outer/url?id=" + str(item['id']),
+                "url": "https://music.163.com/song/media/outer/url?id=" + str(item['id']) + ".mp3",
                 "song": item['name'],
                 "singer": len(item['ar']) > 0 and item['ar'][0]['name'] or '未知'
                 }, _list)
@@ -435,7 +435,7 @@ class ApiMusic():
                         "album": item['al']['name'],
                         "image": ('picUrl' in item['al']) and item['al']['picUrl'] or hot_obj['artist']['picUrl'],
                         "duration": int(item['dt']) / 1000,
-                        "url": "https://music.163.com/song/media/outer/url?id=" + str(item['id']),
+                        "url": "https://music.163.com/song/media/outer/url?id=" + str(item['id']) + ".mp3",
                         "song": item['name'],
                         "singer": len(item['ar']) > 0 and item['ar'][0]['name'] or '未知'
                         }, _list)
