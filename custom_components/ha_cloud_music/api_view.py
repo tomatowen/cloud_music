@@ -1,4 +1,6 @@
 from homeassistant.components.http import HomeAssistantView
+from homeassistant.helpers.network import get_url
+from uuid import uuid1
 
 from .const import DOMAIN_API, DOMAIN
 from .util import trim_char
@@ -8,6 +10,30 @@ class ApiView(HomeAssistantView):
     url = DOMAIN_API
     name = DOMAIN
     requires_auth = True
+
+    # 发送语音信息
+    async def put(self, request):
+        hass = request.app["hass"]
+        query = request.query
+        tts_path = hass.config.path("tts/")
+        try:
+            # 读取文件
+            reader = await request.multipart()
+            file = await reader.next()
+            filename = f"voice-{uuid1()}.mp3"
+            size = 0
+            with open(f"{tts_path}{filename}", 'wb') as f:
+                while True:
+                    chunk = await file.read_chunk()  # 默认是8192个字节。
+                    if not chunk:
+                        break
+                    size += len(chunk)
+                    f.write(chunk)
+            # 本地URL
+            local_url = get_url(hass).strip('/') + '/tts-local/' + filename
+            return self.json({ 'code': 0, 'data': local_url})
+        except Exception as e:
+            return self.json({ 'code': 1, 'msg': '出现异常'})
 
     async def post(self, request):
         response = await request.json()
