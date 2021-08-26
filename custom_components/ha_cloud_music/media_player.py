@@ -647,10 +647,7 @@ class MediaPlayer(MediaPlayerEntity):
                 self.notify("该音频只有尊贵的喜马拉雅VIP会员才能收听😂", "error")
             return url
 
-        url = await self.api_music.get_redirect_url(music_info['url'])
-        # 如果没有url，则去咪咕搜索
-        if url == None:
-            url = await self.api_music.migu_search(music_info['song'], music_info['singer'])
+        url = await self.api_music.get_music_url(music_info['url'], music_info['song'], music_info['singer'])
         return url
                             
     def music_load(self):

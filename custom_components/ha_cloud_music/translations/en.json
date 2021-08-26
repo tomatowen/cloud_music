@@ -5,7 +5,7 @@
                 "description": "项目: https://github.com/shaonianzhentan/ha_cloud_music",
                 "data": {
                     "api_url": "网易云音乐接口地址",
-                    "xmly_api_url": "喜马拉雅VIP音乐解析接口",
+                    "find_api_url": "全网音乐查找接口",
                     "mpd_host": "MPD播放器host",
                     "uid": "网易云音乐的用户ID",
                     "user": "网易云音乐的账号",

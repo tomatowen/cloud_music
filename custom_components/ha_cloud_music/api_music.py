@@ -1,6 +1,6 @@
 import aiohttp, json, re, os, uuid, math, urllib, threading, re
 import http.cookiejar as HC
-from .shaonianzhentan import fetch_info
+from .shaonianzhentan import fetch_info, fetch_json
 from homeassistant.helpers.network import get_url
 
 # 全局请求头
@@ -18,7 +18,7 @@ class ApiMusic():
         self.media = media
         # 网易云音乐接口地址
         self.api_url = config.get("api_url", '').strip('/')
-        self.xmly_api_url = config.get('xmly_api_url', '').strip('/')
+        self.find_api_url = config.get('find_api_url', '').strip('/')
         # 网易云音乐用户ID
         self.uid = str(config.get("uid", ''))
         # 用户名和密码        
@@ -103,32 +103,26 @@ class ApiMusic():
         obj = await self.get("/song/url?id=" + str(id))
         return obj['data'][0]['url']
 
-    # 获取重写向后的地址
-    async def get_redirect_url(self, url):
+    # 获取音乐地址
+    async def get_music_url(self, url, songName, singerName):
         # 请求网页
         res = await fetch_info(url)
         result_url = res['url']
         if result_url == 'https://music.163.com/404':
+            # 全网搜索音乐
+            if self.find_api_url != '':
+                # 如果含有特殊字符，则直接使用名称搜索
+                searchObj = re.search(r'\(|（|：|:《', songName, re.M|re.I)
+                if searchObj:
+                    keywords = songName
+                else:    
+                    keywords = songName + ' - '+ singerName
+                obj = await fetch_json(self.find_api_url + "/api/search?key=" + keywords)
+                if obj is not None and obj['code'] == 0:
+                    return obj['data']['purl']
+            # 居然没搜到，这不科学
             return None
         return result_url
-
-    # 进行咪咕搜索，可以播放周杰伦的歌歌
-    async def migu_search(self, songName, singerName):
-        try:
-            # 如果含有特殊字符，则直接使用名称搜索
-            searchObj = re.search(r'\(|（|：|:《', songName, re.M|re.I)
-            if searchObj:
-                keywords = songName
-            else:    
-                keywords = songName + ' - '+ singerName
-            
-            res = await self.proxy_get("http://m.music.migu.cn/migu/remoting/scr_search_tag?rows=10&type=2&keyword=" + urllib.parse.quote(keywords) + "&pgc=1")
-            
-            if 'musics' in res and len(res['musics']) > 0 and (songName in res['musics'][0]['songName'] or searchObj):
-                return res['musics'][0]['mp3']
-        except Exception as e:
-            print("在咪咕搜索时出现错误：", e)
-        return None
 
     ###################### 获取音乐播放URL ######################
 
@@ -343,8 +337,8 @@ class ApiMusic():
 
     # 获取VIP音频链接
     async def get_ximalaya_vip_audio_url(self, id):
-        if self.xmly_api_url != '':
-            obj = await self.proxy_get(self.xmly_api_url + "/?id=" + str(id))
+        if self.find_api_url != '':
+            obj = await fetch_json(self.find_api_url + "/api/xmly?id=" + str(id))
             if obj is not None and obj['code'] == 0:
                 return obj['data']
 
