@@ -633,10 +633,6 @@ class MediaPlayer(MediaPlayerEntity):
             # 如果传入的是网易电台
             url = await self.api_music.get_song_url(_id)
             return url
-        elif _type == 'qq':                
-            # 如果传入的是QQ音乐
-            url = await self.api_music.get_qq_song_url(music_info['mid'])
-            return url
         elif _type == 'xmly':
             # 喜马拉雅资源
             _url = music_info.get('url', '')

@@ -27,7 +27,6 @@
 media_player:
   - platform: ha_cloud_music
     api_url: （必填）网易云音乐接口请求地址（文档：https://neteasecloudmusicapi.vercel.app）
-    qq_api_url: （非必填）QQ音乐接口请求地址（文档：https://github.com/Rain120/qq-music-api）
     xmly_api_url: （非必填）喜马拉雅VIP音乐解析接口
     mpd_host: MPD播放器host（如果你有的话）
 

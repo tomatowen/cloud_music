@@ -18,7 +18,6 @@ class ApiMusic():
         self.media = media
         # 网易云音乐接口地址
         self.api_url = config.get("api_url", '').strip('/')
-        self.qq_api_url = config.get('qq_api_url', '').strip('/')
         self.xmly_api_url = config.get('xmly_api_url', '').strip('/')
         # 网易云音乐用户ID
         self.uid = str(config.get("uid", ''))
@@ -93,13 +92,6 @@ class ApiMusic():
             self.log('【接口出现异常】' + url, e)
         return result
 
-    # QQ音乐
-    async def qq_get(self, url):
-        if self.qq_api_url != '':
-            res = await self.proxy_get(self.qq_api_url + url)
-            if res is not None and res['response']["code"] == 0:
-                return res['response']
-
     ###################### 获取音乐播放URL ######################    
     async def get_http_code(self, url):
         async with aiohttp.ClientSession() as session:
@@ -110,23 +102,6 @@ class ApiMusic():
     async def get_song_url(self, id):
         obj = await self.get("/song/url?id=" + str(id))
         return obj['data'][0]['url']
-
-    # 获取QQ音乐URL
-    async def get_qq_song_url(self, id):
-        res = await self.qq_get("/getMusicVKey?songmid=" + str(id))
-        if res is not None and len(res['playLists']) > 0:
-            url = res['playLists'][0]
-            http_code = await self.get_http_code(url)
-            if http_code == 403:
-                self.media.notify("😂只有尊贵的QQ音乐绿砖会员才能收听", "error")
-                return None
-                # 如果没有权限，说明这个只有尊贵的QQ音乐绿砖会员才能收听
-                # 我木有钱，只想白嫖，所以调用这位老哥的开放接口
-                vip_url = 'https://api.qq.jsososo.com/song/url?id=' + str(id)
-                print(f"使用白嫖接口：{vip_url}")
-                res = await self.proxy_get(vip_url)
-                return res['data']
-            return url
 
     # 获取重写向后的地址
     async def get_redirect_url(self, url):
@@ -195,24 +170,6 @@ class ApiMusic():
                     "song": item['name'],
                     "singer": len(item['artists']) > 0 and item['artists'][0]['name'] or '未知'
                     }, songs)
-                _list.extend(list(_newlist))
-        # 搜索QQ音乐
-        res = await self.qq_get('/getSmartbox?key=' + name)
-        if res is not None:
-            songs = res['data']['song']
-            if songs['count'] > 0:
-                _newlist = map(lambda item: {
-                    "search_source": "QQ音乐",
-                    "id": int(item['id']),
-                    "mid": item['mid'],
-                    "name": item['name'],
-                    "album": "QQ音乐",
-                    "image": "http://p3.music.126.net/3TTjFNIrtcUzoMlB1D1fDA==/109951164969055590.jpg?param=300y300",
-                    "duration": 0,
-                    "type": "qq",
-                    "song": item['name'],
-                    "singer": item['singer']
-                    }, songs['itemlist'])
                 _list.extend(list(_newlist))
         # 搜索咪咕音乐
         migu_list = await self.search_migu(name)
