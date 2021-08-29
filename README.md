@@ -27,8 +27,7 @@
 media_player:
   - platform: ha_cloud_music
     api_url: （必填）网易云音乐接口请求地址（文档：https://neteasecloudmusicapi.vercel.app）
-    qq_api_url: （非必填）QQ音乐接口请求地址（文档：https://github.com/Rain120/qq-music-api）
-    xmly_api_url: （非必填）喜马拉雅VIP音乐解析接口
+    find_api_url: （非必填）全网音乐查找接口
     mpd_host: MPD播放器host（如果你有的话）
 
 ```
@@ -47,13 +46,16 @@ recorder:
 
 ## 更新说明
 
-### V4.6.1
+### V4.6.1（参数重大变更）
 - 网页播放器集成在卡片中
 - 支持集成添加
 - 修复无法获取网易云音乐真实地址的异常
 - 支持HomeKit显示媒体播放器
 - 支持iOS手机遥控控制
 - 修复无法播放新闻的问题
+- 删除QQ音乐接口地址
+- 新增全网音乐查找接口
+- 支持录音播放
 
 ### V4.6
 - 调整网页播放器TTS播放通道

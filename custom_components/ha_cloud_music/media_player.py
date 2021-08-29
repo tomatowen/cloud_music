@@ -633,10 +633,6 @@ class MediaPlayer(MediaPlayerEntity):
             # 如果传入的是网易电台
             url = await self.api_music.get_song_url(_id)
             return url
-        elif _type == 'qq':                
-            # 如果传入的是QQ音乐
-            url = await self.api_music.get_qq_song_url(music_info['mid'])
-            return url
         elif _type == 'xmly':
             # 喜马拉雅资源
             _url = music_info.get('url', '')
@@ -651,10 +647,7 @@ class MediaPlayer(MediaPlayerEntity):
                 self.notify("该音频只有尊贵的喜马拉雅VIP会员才能收听😂", "error")
             return url
 
-        url = await self.api_music.get_redirect_url(music_info['url'])
-        # 如果没有url，则去咪咕搜索
-        if url == None:
-            url = await self.api_music.migu_search(music_info['song'], music_info['singer'])
+        url = await self.api_music.get_music_url(music_info['url'], music_info['song'], music_info['singer'])
         return url
                             
     def music_load(self):

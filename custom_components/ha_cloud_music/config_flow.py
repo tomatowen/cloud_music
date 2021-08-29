@@ -11,8 +11,7 @@ _LOGGER = logging.getLogger(__name__)
 
 DATA_SCHEMA = vol.Schema({
     vol.Required("api_url", default = ""): str,
-    vol.Optional("qq_api_url", default = ""): str,
-    vol.Optional("xmly_api_url", default = ""): str,
+    vol.Optional("find_api_url", default = ""): str,
     vol.Optional("mpd_host", default = ""): str,
     vol.Optional("uid", default = ""): str,
     vol.Optional("user", default = ""): str,
