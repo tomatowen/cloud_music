@@ -8,7 +8,7 @@ async def fetch_text(url, headers = {}):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
         'Referer': f'{p.scheme}//{p.netloc}'
     }
-    HEADERS.UPDATE(headers)
+    HEADERS.update(headers)
     text = None
     connector = aiohttp.TCPConnector(verify_ssl=False)
     async with aiohttp.ClientSession(headers=HEADERS, connector=connector) as session:
