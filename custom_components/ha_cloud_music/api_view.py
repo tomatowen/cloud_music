@@ -29,6 +29,12 @@ class ApiView(HomeAssistantView):
                         break
                     size += len(chunk)
                     f.write(chunk)
+            
+            # 播放音频
+            source = query.get('source', '')
+            if source == '':
+                mp = hass.data[DOMAIN]
+                await mp.api_tts.speak(filename)
             # 本地URL
             local_url = get_url(hass).strip('/') + '/tts-local/' + filename
             return self.json({ 'code': 0, 'data': local_url})

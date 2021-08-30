@@ -76,6 +76,8 @@ class HaCloudMusicSetting extends HTMLElement {
         <div class="tts-input">
             <input type="text" placeholder="文字转语音" />
         </div>
+        <mwc-button  class="tts-button" label="按住 说话" unelevated style="width:100%;"></mwc-button>
+
         <!-- 缓存 --> 
         <mwc-button  class="cache-button" label="缓存当前音乐到media目录"></mwc-button>
 
@@ -237,6 +239,30 @@ class HaCloudMusicSetting extends HTMLElement {
                 window.ha_cloud_music.media_player = new MediaPlayer()
             })
         }
+        // 录音
+        const ttsButton = $('.tts-button')
+        if (location.protocol == 'https:') {
+            window.ha_cloud_music.initAudio()
+            if ('ontouchstart' in document.documentElement) {
+                ttsButton.addEventListener('touchstart', this.startRecording)
+                ttsButton.addEventListener('touchend', this.stopRecording)
+            } else {
+                ttsButton.addEventListener('mousedown', this.startRecording)
+                ttsButton.addEventListener('mouseup', this.stopRecording)
+            }
+        } else {
+            ttsButton.classList.add('hide')
+        }
+    }
+
+    startRecording(btn) {
+        btn.innerText = '松开 结束'
+        window.ha_cloud_music.startRecording()
+    }
+
+    stopRecording(btn) {
+        window.ha_cloud_music.stopRecording()
+        btn.innerText = '按住 说话'
     }
 
     // 验证下载链接

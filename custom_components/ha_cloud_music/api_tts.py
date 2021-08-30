@@ -121,8 +121,12 @@ class ApiTTS():
 
     # 获取语音URL
     def play_url(self, text):
-         # 生成文件名
-        f_name = 'tts-' + self.media.api_config.md5(text + str(self.tts_mode)) + ".mp3"
+        # 如果传入的是链接
+        if text.find('voice-') == 0:
+            f_name = text
+        else:
+            # 生成文件名
+            f_name = 'tts-' + self.media.api_config.md5(text + str(self.tts_mode)) + ".mp3"
         # 创建目录名称
         _dir =  self.hass.config.path("tts")
         self.media.api_config.mkdir(_dir)
@@ -176,17 +180,20 @@ class ApiTTS():
 
     async def speak(self, call):
         try:
-            text = call.data.get('text', '')
-            if text == '':
-                # 解析模板
-                tpl = template.Template(call.data['message'], self.hass)
-                text = self.tts_before_message + tpl.async_render(None) + self.tts_after_message
+            if isinstance(call, str):
+                text = call
+            else:
+                text = call.data.get('text', '')
+                if text == '':
+                    # 解析模板
+                    tpl = template.Template(call.data['message'], self.hass)
+                    text = self.tts_before_message + tpl.async_render(None) + self.tts_after_message
 
             self.log('解析后的内容', text)
             if self.thread != None:
                 self.thread.join()
 
             self.thread = threading.Thread(target=self.async_tts, args=(text,))
-            self.thread.start()            
+            self.thread.start()
         except Exception as ex:
             self.log('出现异常', ex)

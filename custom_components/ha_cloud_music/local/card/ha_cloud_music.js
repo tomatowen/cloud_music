@@ -1,5 +1,6 @@
 window.ha_cloud_music = {
     media_player: null,
+    recorder: null,
     eventQueue: {},
     get hass() {
         return document.querySelector('home-assistant').hass
@@ -22,6 +23,51 @@ window.ha_cloud_music = {
             method: 'POST',
             body: JSON.stringify(params)
         }).then(res => res.json())
+    },
+    initAudio() {
+        if (document.querySelector('#ha_cloud_music-recorder')) return;
+        const script = document.createElement('script')
+        script.id = 'ha_cloud_music-recorder'
+        script.src = 'https://cdn.jsdelivr.net/gh/shaonianzhentan/lovelace-voice-speak@master/dist/recorder.mp3.min.js'
+        script.onload = () => {
+            const recorder = Recorder({ type: "mp3", sampleRate: 16000 });
+            recorder.open(function () {
+                // 开始录音
+                // recorder.start();
+            }, function (msg, isUserNotAllow) {
+                // 用户拒绝未授权或不支持
+                console.log((isUserNotAllow ? "UserNotAllow，" : "") + "无法录音:" + msg);
+                // 如果没有权限，则显示提示
+                if (isUserNotAllow) {
+                    window.ha_cloud_music.toast('无法录音：' + msg)
+                }
+            });
+            window.ha_cloud_music.recorder = recorder
+        }
+        document.body.appendChild(script)
+    },
+    startRecording() {
+        const { recorder } = window.ha_cloud_music
+        recorder.start();
+    },
+    stopRecording() {
+        const { recorder, toast, hass } = window.ha_cloud_music
+        recorder.stop(async (blob, duration) => {
+            // 到达指定条件停止录音
+            // console.log((window.URL || webkitURL).createObjectURL(blob), "时长:" + duration + "ms");
+            recorder.close(); // 释放录音资源
+            if (duration > 2000) {
+                // 已经拿到blob文件对象想干嘛就干嘛：立即播放、上传
+                let formData = new FormData()
+                formData.append('mp3', blob)
+                const res = await hass.fetchWithAuth('/ha_cloud_music-api', { method: 'PUT', body: formData }).then(res => res.json())
+                toast(res.msg)
+            } else {
+                toast('当前录音时间没有2秒')
+            }
+        }, function (msg) {
+            toast("录音失败:" + msg);
+        });
     },
     callService(service_name, service_data = {}) {
         let arr = service_name.split('.')
@@ -79,7 +125,7 @@ window.ha_cloud_music = {
         ha_cloud_music.load('tabs').then(async () => {
             await ha_cloud_music.load(['playlist', 'lovelist', 'search', 'setting', 'voice', 'fmlist', 'version'])
             ha_cloud_music.load('panel')
-        })        
+        })
     }, 2000)
 })();
 
