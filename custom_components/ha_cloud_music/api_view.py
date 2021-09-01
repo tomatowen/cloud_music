@@ -37,7 +37,7 @@ class ApiView(HomeAssistantView):
                 await mp.api_tts.speak(filename)
             # 本地URL
             local_url = get_url(hass).strip('/') + '/tts-local/' + filename
-            return self.json({ 'code': 0, 'data': local_url})
+            return self.json({ 'code': 0, 'msg': '发送成功', 'data': local_url})
         except Exception as e:
             return self.json({ 'code': 1, 'msg': '出现异常'})
 

@@ -244,11 +244,11 @@ class HaCloudMusicSetting extends HTMLElement {
         if (location.protocol == 'https:') {
             window.ha_cloud_music.initAudio()
             if ('ontouchstart' in document.documentElement) {
-                ttsButton.addEventListener('touchstart', this.startRecording)
-                ttsButton.addEventListener('touchend', this.stopRecording)
+                ttsButton.addEventListener('touchstart', this.startRecording.bind(this))
+                ttsButton.addEventListener('touchend', this.stopRecording.bind(this))
             } else {
-                ttsButton.addEventListener('mousedown', this.startRecording)
-                ttsButton.addEventListener('mouseup', this.stopRecording)
+                ttsButton.addEventListener('mousedown', this.startRecording.bind(this))
+                ttsButton.addEventListener('mouseup', this.stopRecording.bind(this))
             }
         } else {
             ttsButton.classList.add('hide')
@@ -256,13 +256,13 @@ class HaCloudMusicSetting extends HTMLElement {
     }
 
     startRecording() {
-        $('.tts-button').innerText = '松开 结束'
+        this.$('.tts-button').label = '松开 结束'
         window.ha_cloud_music.startRecording()
     }
 
     stopRecording() {
         window.ha_cloud_music.stopRecording()
-        $('.tts-button').innerText = '按住 说话'
+        this.$('.tts-button').label = '按住 说话'
     }
 
     // 验证下载链接
