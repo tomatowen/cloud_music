@@ -110,8 +110,8 @@ class HaCloudMusicSetting extends HTMLElement {
             border: 1px solid silver;
             padding: 8px 10px;}
          
+         .tts-button{margin-top: 20px;}
          .cache-button{margin-top:20px; width:100%; }
-
         `
         shadow.appendChild(style);
         // 保存核心DOM对象
@@ -255,14 +255,14 @@ class HaCloudMusicSetting extends HTMLElement {
         }
     }
 
-    startRecording(btn) {
-        btn.innerText = '松开 结束'
+    startRecording() {
+        $('.tts-button').innerText = '松开 结束'
         window.ha_cloud_music.startRecording()
     }
 
-    stopRecording(btn) {
+    stopRecording() {
         window.ha_cloud_music.stopRecording()
-        btn.innerText = '按住 说话'
+        $('.tts-button').innerText = '按住 说话'
     }
 
     // 验证下载链接

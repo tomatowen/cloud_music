@@ -30,25 +30,24 @@ window.ha_cloud_music = {
         script.id = 'ha_cloud_music-recorder'
         script.src = 'https://cdn.jsdelivr.net/gh/shaonianzhentan/lovelace-voice-speak@master/dist/recorder.mp3.min.js'
         script.onload = () => {
-            const recorder = Recorder({ type: "mp3", sampleRate: 16000 });
-            recorder.open(function () {
-                // 开始录音
-                // recorder.start();
-            }, function (msg, isUserNotAllow) {
-                // 用户拒绝未授权或不支持
-                console.log((isUserNotAllow ? "UserNotAllow，" : "") + "无法录音:" + msg);
-                // 如果没有权限，则显示提示
-                if (isUserNotAllow) {
-                    window.ha_cloud_music.toast('无法录音：' + msg)
-                }
-            });
-            window.ha_cloud_music.recorder = recorder
+
         }
         document.body.appendChild(script)
     },
     startRecording() {
-        const { recorder } = window.ha_cloud_music
-        recorder.start();
+        const recorder = Recorder({ type: "mp3", sampleRate: 16000 });
+        recorder.open(function () {
+            // 开始录音
+            recorder.start();
+        }, function (msg, isUserNotAllow) {
+            // 用户拒绝未授权或不支持
+            console.log((isUserNotAllow ? "UserNotAllow，" : "") + "无法录音:" + msg);
+            // 如果没有权限，则显示提示
+            if (isUserNotAllow) {
+                ha_cloud_music.toast('无法录音：' + msg)
+            }
+        });
+        window.ha_cloud_music.recorder = recorder
     },
     stopRecording() {
         const { recorder, toast, hass } = window.ha_cloud_music
@@ -92,7 +91,7 @@ window.ha_cloud_music = {
         document.querySelector('home-assistant').dispatchEvent(event);
     },
     toast(message) {
-        this.fire("hass-notification", { message })
+        ha_cloud_music.fire("hass-notification", { message })
     },
     onmessage(type, data) {
         this.eventQueue[type](data)
