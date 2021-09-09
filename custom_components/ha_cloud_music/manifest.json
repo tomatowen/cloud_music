@@ -1,7 +1,7 @@
 {
   "domain": "ha_cloud_music",
   "name": "\u4E91\u97F3\u4E50",
-  "version": "4.6",
+  "version": "1.0",
   "config_flow": true,
   "documentation": "https://github.com/shaonianzhentan/ha_cloud_music",
   "requirements": [
@@ -10,5 +10,5 @@
     "python-vlc==1.1.2"
   ],
   "dependencies": [],
-  "codeowners": []
+  "codeowners": ["@shaonianzhentan"]
 }
