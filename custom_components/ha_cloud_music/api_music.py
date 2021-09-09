@@ -151,20 +151,20 @@ class ApiMusic():
         # 如果配置了全网音乐搜索，则直接使用
         if self.find_api_url != '':
             obj = await fetch_json(self.find_api_url + "/api/search?key=" + name)
-                if obj is not None and obj['code'] == 0:
-                    item = obj['data']
-                    _list.append({
-                        "search_source": item['source'],
-                        "id": item['id'],
-                        "name": item['name'],
-                        "album": item['album'],
-                        "image": item['cover'],
-                        "duration": item['duration'],
-                        "url": item['purl'],
-                        "song": item['name'],
-                        "singer": item['singer']
-                    })
-                    return _list
+            if obj is not None and obj['code'] == 0:
+                item = obj['data']
+                _list.append({
+                    "search_source": item['source'],
+                    "id": item['id'],
+                    "name": item['name'],
+                    "album": item['album'],
+                    "image": item['cover'],
+                    "duration": item['duration'],
+                    "url": item['purl'],
+                    "song": item['name'],
+                    "singer": item['singer']
+                })
+                return _list
 
         # 搜索网易云音乐
         obj = await self.get('/search?keywords='+ name)
