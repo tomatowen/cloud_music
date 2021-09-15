@@ -58,7 +58,7 @@ class MediaPlayerWEB():
             elif type == 'update':
                 media_position = data.get('media_position', 0)
                 media_duration = data.get('media_duration', 0)                
-                print(self.media_position, self.media_duration)
+                # print(self.media_position, self.media_duration)
                 # 更新进度
                 if self.media_duration is not None and self.media_position is not None \
                     and self.media_duration > 0 and self.media_position > 0 \
