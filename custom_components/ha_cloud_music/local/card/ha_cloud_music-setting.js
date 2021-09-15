@@ -19,7 +19,6 @@ class HaCloudMusicSetting extends HTMLElement {
                 <select></select>
             </fieldset>
         </div>
-        <mwc-button id="btnLoadPlayer" raised label="加载网页播放器" style="width:100%;margin:10px 0;"></mwc-button>        
         <div class="rate-source">
             <fieldset>
                 <legend>播放速度</legend>
@@ -119,6 +118,7 @@ class HaCloudMusicSetting extends HTMLElement {
         this.$ = this.shadow.querySelector.bind(this.shadow)
         // 创建成功
         this.isCreated = true
+        let loading = false
 
         /* ***************** 附加代码 ***************** */
         let { $ } = this
@@ -155,6 +155,19 @@ class HaCloudMusicSetting extends HTMLElement {
             let { entity_id, attributes } = _this.stateObj
             let sound_mode = this.value
             console.log(sound_mode)
+            // 自动加载网页播放器
+            if (sound_mode === '网页播放器') {
+                (() => {
+                    if (window.ha_cloud_music.media_player) return ha_cloud_music.toast('已经加载过了，不用重复加载');
+                    if (loading) return;
+                    loading = true
+                    // 加载网页播放器
+                    import('./MediaPlayer.js').then(({ MediaPlayer }) => {
+                        loading = false
+                        window.ha_cloud_music.media_player = new MediaPlayer()
+                    })
+                })();
+            }
             // 选择源播放器
             if (attributes.sound_mode != sound_mode) {
                 ha_cloud_music.callService('media_player.select_sound_mode', {
@@ -205,7 +218,6 @@ class HaCloudMusicSetting extends HTMLElement {
             }
         })
         // 缓存音乐
-        let loading = false
         $('.cache-button').onclick = () => {
             const { media_url, media_title, media_artist } = this.stateObj.attributes
             if (media_url) {
@@ -227,17 +239,6 @@ class HaCloudMusicSetting extends HTMLElement {
             } else {
                 ha_cloud_music.toast('当前播放链接有问题，不能缓存')
             }
-        }
-        // 加载网页播放器
-        $('#btnLoadPlayer').onclick = () => {
-            if (window.ha_cloud_music.media_player) return ha_cloud_music.toast('已经加载过了，不用重复加载');
-            if (loading) return;
-            loading = true
-            // 加载网页播放器
-            import('./MediaPlayer.js').then(({ MediaPlayer }) => {
-                loading = false
-                window.ha_cloud_music.media_player = new MediaPlayer()
-            })
         }
         // 录音
         const ttsButton = $('.tts-button')
@@ -322,8 +323,9 @@ class HaCloudMusicSetting extends HTMLElement {
                 const states = ha_cloud_music.hass.states
                 sound_mode_list_str += Object.keys(states).filter(ele => ele.indexOf('media_player') === 0 && !ele.includes('media_player.yun_yin_le')).map(key => {
                     let entity = states[key]
-                    if (entity.state === "unavailable") return ''
-                    return `<option value="${key}">${entity.attributes.friendly_name}</option>`
+                    const { friendly_name } = entity.attributes
+                    if (entity.state === "unavailable" || !friendly_name) return ''
+                    return `<option value="${key}">${friendly_name}</option>`
                 })
                 listbox.innerHTML = sound_mode_list_str
                 // 选择当前默认项
