@@ -258,11 +258,22 @@ class HaCloudMusicSetting extends HTMLElement {
     startRecording() {
         this.$('.tts-button').label = '松开 结束'
         window.ha_cloud_music.startRecording()
+        // 震動
+        if (navigator.vibrate) {
+            navigator.vibrate(50)
+        }
     }
 
     stopRecording() {
-        window.ha_cloud_music.stopRecording()
         this.$('.tts-button').label = '按住 说话'
+        // 放开后半秒结束
+        setTimeout(() => {
+            // 震動
+            if (navigator.vibrate) {
+                navigator.vibrate(50)
+            }
+            window.ha_cloud_music.stopRecording()
+        }, 500)
     }
 
     // 验证下载链接
