@@ -19,13 +19,11 @@ class ApiMusic():
         # 网易云音乐接口地址
         self.api_url = config.get("api_url", '').strip('/')
         self.find_api_url = config.get('find_api_url', '').strip('/')
-        # 网易云音乐用户ID
-        self.uid = str(config.get("uid", ''))
         # 用户名和密码        
         self.user = str(config.get("user", ''))
         self.password = str(config.get("password", ''))
 
-    async def login(self):
+    async def login(self, login_callback):
         # 如果有用户名密码，则登录
         if self.user != '' and self.password != '':
             self.log('登录操作', '开始登录')
@@ -38,11 +36,15 @@ class ApiMusic():
                 res = await self.get('/login/cellphone?phone=' + self.user + '&password=' + self.password)
             # 登录成功
             if res is not None and res['code'] == 200:
-                self.uid = str(res['account']['id'])
                 self.log('登录成功')
+                login_callback(str(res['account']['id']))
+                return
             else:
+                print(res)
                 self.media.notify("网易云登录失败，请检查账号密码是否错误。如果确定没错，请检查接口是否正常。", "error")
                 self.log('登录失败', res)
+
+        login_callback('')
 
     def log(self, name, value = ''):
         self.media.log('【ApiMusic接口】%s：%s',name,value)

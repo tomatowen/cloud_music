@@ -70,8 +70,16 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     if mp.api_music.api_url == '':
         mp.notify("检测到未配置api_url参数！", "error")
         return
-    # 开始登录    
-    hass.async_create_task(mp.api_music.login())
+
+    def login_callback(uid):
+        # 注册菜单栏
+        hass.components.frontend.async_register_built_in_panel(
+            "iframe", NAME, ICON, DOMAIN,
+            { "url": ROOT_PATH + "/index.html?ver=" + VERSION + "&show_mode=" + show_mode + "&uid=" + uid },
+            require_admin=False
+        )
+    # 开始登录
+    hass.async_create_task(mp.api_music.login(login_callback))
     
     hass.data[DOMAIN] = mp
     # 添加实体
@@ -107,20 +115,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 -------------------------------------------------------------------
     ha_cloud_music云音乐插件【作者QQ：635147515】
     
-    版本：''' + VERSION + '''    
-    
-    介绍：这是一个网易云音乐的HomeAssistant播放器插件
-    
-    项目地址：https://github.com/shaonianzhentan/ha_cloud_music
-    
-    配置信息：
-    
-        API_URL：''' +  mp.api_music.api_url + '''
-        
-        显示模式：''' + (show_mode == 'fullscreen' and '全局模式' or '默认模式') + '''
-        
-        用户ID：''' + mp.api_music.uid + '''
-
+    版本：''' + VERSION + '''
 -------------------------------------------------------------------''')
 ################### 注册静态目录与接口网关 ###################
     # 注册静态目录
@@ -129,15 +124,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     hass.http.register_static_path('/media-local', hass.config.path("media/ha_cloud_music"), False)
     hass.http.register_static_path(WEB_PATH, hass.config.path("custom_components/ha_cloud_music/local"), False)
     # 注册网关接口
-    hass.http.register_view(ApiView)
-    # 注册菜单栏
-    hass.components.frontend.async_register_built_in_panel(
-        "iframe", NAME, ICON, DOMAIN,
-        { "url": ROOT_PATH + "/index.html?ver=" + VERSION
-        + "&show_mode=" + show_mode
-        + "&uid=" + mp.api_music.uid },
-        require_admin=False
-    )
+    hass.http.register_view(ApiView)    
     # 添加状态卡片
     hass.components.frontend.add_extra_js_url(hass, WEB_PATH + '/card/ha_cloud_music.js?v=' + VERSION)
     ################### 注册静态目录与接口网关 ###################
