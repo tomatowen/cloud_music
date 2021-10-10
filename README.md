@@ -23,10 +23,11 @@
 > 后台插件配置
 
 然后在configuration.yaml中配置以下内容
+`网易云音乐接口文档：https://neteasecloudmusicapi.vercel.app`
 ```yaml
 media_player:
   - platform: ha_cloud_music
-    api_url: （必填）网易云音乐接口请求地址（文档：https://neteasecloudmusicapi.vercel.app）
+    api_url: https://netease-cloud-music-api-7k8q.vercel.app
     find_api_url: （非必填）全网音乐查找接口
     mpd_host: MPD播放器host（如果你有的话）
 
