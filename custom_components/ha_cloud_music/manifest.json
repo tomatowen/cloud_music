@@ -8,7 +8,7 @@
     "mutagen==1.45.1",
     "python-mpd2==3.0.4",
     "python-vlc==1.1.2",
-    "edge_tts=2.2.2"
+    "edge_tts==2.2.2"
   ],
   "dependencies": [],
   "codeowners": ["@shaonianzhentan"]
