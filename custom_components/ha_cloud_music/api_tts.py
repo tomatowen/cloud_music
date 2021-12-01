@@ -67,7 +67,8 @@ class ApiTTS():
         if os.path.isfile(ob_name) == False:
             voice_list = ['zh-CN-XiaomoNeural', 'zh-CN-XiaoxuanNeural', 'zh-CN-XiaohanNeural', 'zh-CN-XiaoxiaoNeural']
             voice = voice_list[self.tts_mode - 1]
-            self.hass.async_create_task(self.write_tts_file(ob_name, voice, text))
+            asyncio.run(self.write_tts_file(ob_name, voice, text))
+            time.sleep(2)
         else:
             # 如果没有下载，则延时1秒
             time.sleep(1)
