@@ -9,8 +9,7 @@ class ApiTTS():
         self.hass = media._hass
         self.media = media
         self.media_position = None
-        self.media_url = None
-        self.thread = None        
+        self.media_url = None 
         self.tts_before_message = cfg['tts_before_message']
         self.tts_after_message = cfg['tts_after_message']
         tts_mode = cfg['tts_mode']        
@@ -68,7 +67,6 @@ class ApiTTS():
             voice_list = ['zh-CN-XiaomoNeural', 'zh-CN-XiaoxuanNeural', 'zh-CN-XiaohanNeural', 'zh-CN-XiaoxiaoNeural']
             voice = voice_list[self.tts_mode - 1]
             await self.write_tts_file(ob_name, voice, text)
-            time.sleep(1)
             # 修改MP3文件属性
             meta = mutagen.File(ob_name, easy=True)
             meta['title'] = text
@@ -131,10 +129,6 @@ class ApiTTS():
                     text = self.tts_before_message + tpl.async_render(None) + self.tts_after_message
 
             self.log('解析后的内容', text)
-            if self.thread != None:
-                self.thread.join()
-
-            self.thread = threading.Thread(target=asyncio.run, args=(self.async_tts(text)))
-            self.thread.start()
+            await self.async_tts(text)
         except Exception as ex:
             self.log('出现异常', ex)
