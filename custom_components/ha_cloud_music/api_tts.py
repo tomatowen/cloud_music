@@ -9,7 +9,8 @@ class ApiTTS():
         self.hass = media._hass
         self.media = media
         self.media_position = None
-        self.media_url = None 
+        self.media_url = None
+        self.thread = None        
         self.tts_before_message = cfg['tts_before_message']
         self.tts_after_message = cfg['tts_after_message']
         tts_mode = cfg['tts_mode']        
@@ -29,14 +30,14 @@ class ApiTTS():
         self.media.log('【文本转语音】%s：%s',name,value)
 
     # 异步进行TTS逻辑
-    async def async_tts(self, text):
+    def async_tts(self, text):
         # 如果当前正在播放，则暂停当前播放，保存当前播放进度
         if self.media._media_player != None and self.media.state == STATE_PLAYING:
            self.media.media_pause()
            self.media_position = self.media.media_position
            self.media_url = self.media.media_url
         # 播放当前文字内容
-        await self.play_url(text)
+        self.play_url(text)
         # 恢复当前播放到保存的进度
         if self.media_url is not None:
             self.log('恢复当前播放URL', self.media_url)
@@ -49,7 +50,7 @@ class ApiTTS():
             self.media_url = None
 
     # 获取语音URL
-    async def play_url(self, text):
+    def play_url(self, text):
         # 如果传入的是链接
         if text.find('voice-') == 0:
             f_name = text
@@ -66,11 +67,7 @@ class ApiTTS():
         if os.path.isfile(ob_name) == False:
             voice_list = ['zh-CN-XiaomoNeural', 'zh-CN-XiaoxuanNeural', 'zh-CN-XiaohanNeural', 'zh-CN-XiaoxiaoNeural']
             voice = voice_list[self.tts_mode - 1]
-            await self.write_tts_file(ob_name, voice, text)
-            # 修改MP3文件属性
-            meta = mutagen.File(ob_name, easy=True)
-            meta['title'] = text
-            meta.save()
+            self.hass.async_create_task(self.write_tts_file(ob_name, voice, text))
         else:
             # 如果没有下载，则延时1秒
             time.sleep(1)
@@ -102,9 +99,10 @@ class ApiTTS():
             self.media._media_player.set_volume_level(volume_level)            
 
     # 获取TTS文件
-    async def write_tts_file(self, ob_name, voice, message):
+    async def write_tts_file(self, ob_name, voice, text):
         communicate = edgeTTS.Communicate()
         lang = 'zh-CN'
+        message = text
         xml = '<speak version="1.0"' \
                 ' xmlns="http://www.w3.org/2001/10/synthesis"' \
                 ' xmlns:mstts="https://www.w3.org/2001/mstts"' \
@@ -115,6 +113,11 @@ class ApiTTS():
             async for i in communicate.run(xml, customspeak=True):
                 if i[2] is not None:
                     fp.write(i[2])
+        
+        # 修改MP3文件属性
+        meta = mutagen.File(ob_name, easy=True)
+        meta['title'] = text
+        meta.save()
         return fp.name
 
     async def speak(self, call):
@@ -129,6 +132,10 @@ class ApiTTS():
                     text = self.tts_before_message + tpl.async_render(None) + self.tts_after_message
 
             self.log('解析后的内容', text)
-            await self.async_tts(text)
+            if self.thread != None:
+                self.thread.join()
+
+            self.thread = threading.Thread(target=self.async_tts, args=(text,))
+            self.thread.start()
         except Exception as ex:
             self.log('出现异常', ex)
