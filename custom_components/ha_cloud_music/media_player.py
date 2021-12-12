@@ -35,19 +35,16 @@ from .source_vlc import MediaPlayerVLC
 from .source_mpd import MediaPlayerMPD
 from .source_other import MediaPlayerOther
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    # 显示模式 全屏：fullscreen
-    show_mode = config.get("show_mode", "default")
-    
+
+async def async_setup_entry(hass, entry, async_add_entities) -> None:
+    options = entry.options
+    config = dict(entry.data, **options)
     # TTS相关配置
-    tts_before_message = config.get("tts_before_message", '')
-    tts_after_message = config.get("tts_after_message", '')
-    tts_mode = config.get("tts_mode", 4)
-
-    #### （启用/禁用）配置 #### 
-
+    tts_before_message = options.get("tts_before_message", '')
+    tts_after_message = options.get("tts_after_message", '')
+    tts_mode = options.get("tts_mode", 4)
     # 是否开启语音文字处理程序（默认启用）
-    is_voice = config.get('is_voice', True)
+    is_voice = entry.data.get('is_voice', True)
 
     ################### 系统配置 ###################
 
@@ -58,7 +55,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     api_config.mkdir(hass.config.path("media/ha_cloud_music"))
     mp = MediaPlayer(hass, config, api_config)
     # 是否启用通知（默认启用）
-    mp.is_notify = config.get('is_notify', True)
+    mp.is_notify = options.get('is_notify', True)
     
     mp.api_tts = ApiTTS(mp,{
         'tts_before_message': tts_before_message,
@@ -75,16 +72,13 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         # 注册菜单栏
         hass.components.frontend.async_register_built_in_panel(
             "iframe", NAME, ICON, DOMAIN,
-            { "url": ROOT_PATH + "/index.html?ver=" + VERSION + "&show_mode=" + show_mode + "&uid=" + uid },
+            { "url": ROOT_PATH + "/index.html?ver=" + VERSION + "&show_mode=default&uid=" + uid },
             require_admin=False
         )
     # 开始登录
     hass.async_create_task(mp.api_music.login(login_callback))
     
     hass.data[DOMAIN] = mp
-    # 添加实体
-    add_entities([mp])
-
     ################### 定义实体类 ###################
 
     ################### 注册服务 ################### 
@@ -128,12 +122,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     # 添加状态卡片
     hass.components.frontend.add_extra_js_url(hass, WEB_PATH + '/card/ha_cloud_music.js?v=' + VERSION)
     ################### 注册静态目录与接口网关 ###################
-    return True   
-
-# 集成安装
-async def async_setup_entry(hass, config_entry, async_add_entities):
-    setup_platform(hass, config_entry.data, async_add_entities)
-    return True
+    async_add_entities([mp], True)
 
 ###################媒体播放器##########################
 class MediaPlayer(MediaPlayerEntity):

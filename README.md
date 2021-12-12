@@ -1,37 +1,19 @@
 # 网易云音乐HA插件
 
-基于第三方UI修改，配合自定义的media插件实现的后台播放功能；
+[![hacs_badge](https://img.shields.io/badge/Home-Assistant-%23049cdb)](https://www.home-assistant.io/)
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
-> custom_components：对应的HomeAssistant自定义插件目录
+![visit](https://visitor-badge.glitch.me/badge?page_id=shaonianzhentan.ha_cloud_music&left_text=visit)
+![forks](https://img.shields.io/github/forks/shaonianzhentan/ha_cloud_music)
+![stars](https://img.shields.io/github/stars/shaonianzhentan/ha_cloud_music)
+![license](https://img.shields.io/github/license/shaonianzhentan/ha_cloud_music)
 
-> 这个前端的播放器由 [maomao1996](https://github.com/maomao1996) 开发，我只是基础上进行了修改
+## 安装方式
 
-## 如何使用
+安装完成重启HA，刷新一下页面，在集成里搜索`云音乐`即可
 
-如果实在不会用或有问题，请看完先：https://www.bilibili.com/video/BV1et4y1a7RU/
+[![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=ha_cloud_music)
 
-> 安装
-
-1.使用[HACS安装](https://github.com/custom-components/hacs)
-
-在HACS里输入：https://github.com/shaonianzhentan/ha_cloud_music 即可安装成功（类型选择Integration）
-
-2.自定义安装
-
-将本项目custom_components里的内容，放到HA的custom_components文件夹中
-
-> 后台插件配置
-
-然后在configuration.yaml中配置以下内容
-`网易云音乐接口文档：https://neteasecloudmusicapi.vercel.app`
-```yaml
-media_player:
-  - platform: ha_cloud_music
-    api_url: https://netease-cloud-music-api-7k8q.vercel.app
-    find_api_url: （非必填）全网音乐查找接口
-    mpd_host: MPD播放器host（如果你有的话）
-
-```
 
 > 注意事项（一定要配置）`当属性过多会把数据库撑爆，一定要把这个播放器过滤掉`
 ```yaml
@@ -42,11 +24,12 @@ recorder:
       - media_player.yun_yin_le  
 ```
 
-## 更新说明
+## 更新日志
 
-### V4.7.2
+### V4.7.3
 - 移除uid参数，可自动获取
 - TTS替换成微软Edge服务
+- 只支持集成安装
 
 ### V4.7（参数重大变更）
 - 网页播放器集成在卡片中
@@ -404,28 +387,10 @@ recorder:
 ### V0.0.1（2019.07.06）
 - 解决后台播放支持全部媒体插件的功能
 
-
-# 请一定要在HomeAssistant里使用，不然没啥用，
-
-## 关于界面相关，请查看原作者的项目，
-
-## 我要减少这个库的大小，所以把图片都删了
-
-
-## 免责声明
-本站音频文件来自各网站接口，本站不会修改任何音频文件
-
-音频版权来自各网站，本站只提供数据查询服务，不提供任何音频存储和贩卖服务
-
-本项目仅为自己测试项目，请勿用作商业用途，请勿通过本项目下载盗版歌曲资源，否则后果自负！
-
-
-## License
-
-[MIT](https://github.com/maomao1996/Vue-mmPlayer/blob/master/LICENSE)
-
-
 ## 如果这个项目对你有帮助，请我喝杯<del style="font-size: 14px;">咖啡</del>奶茶吧😘
 |支付宝|微信|
 |---|---|
 <img src="https://github.com/shaonianzhentan/ha-docs/raw/master/docs/img/alipay.png" align="left" height="160" width="160" alt="支付宝" title="支付宝">  |  <img src="https://github.com/shaonianzhentan/ha-docs/raw/master/docs/img/wechat.png" align="left" height="160" width="160" alt="微信支付" title="微信">
+
+#### 关注我的微信订阅号，了解更多HomeAssistant相关知识
+<img src="https://github.com/shaonianzhentan/ha-docs/raw/master/docs/img/wechat-channel.png" align="left" height="160" alt="HomeAssistant家庭助理" title="HomeAssistant家庭助理"> 
