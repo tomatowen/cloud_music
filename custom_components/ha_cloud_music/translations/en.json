@@ -6,7 +6,8 @@
                 "description": "项目: https://github.com/shaonianzhentan/ha_cloud_music",
                 "data": {
                     "api_url": "网易云音乐接口地址",
-                    "is_voice": "启用语音控制"
+                    "mpd_host": "MPD播放器host",
+                    "is_voice": "启用语音控制"                    
                 }
             }
         },
@@ -22,7 +23,6 @@
                 "description": "配置",
                 "data": {
                     "find_api_url": "全网音乐查找接口",
-                    "mpd_host": "MPD播放器host",
                     "user": "网易云音乐的账号",
                     "password": "网易云音乐的密码",
                     "tts_before_message": "TTS前置消息",

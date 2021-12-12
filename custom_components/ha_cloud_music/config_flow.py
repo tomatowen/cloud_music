@@ -30,6 +30,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # 显示表单
         DATA_SCHEMA = vol.Schema({
             vol.Required("api_url", default="https://netease-cloud-music-api-7k8q.vercel.app"): str,
+            vol.Optional("mpd_host"): str,
             vol.Optional("is_voice", default=True): bool,
         })
         return self.async_show_form(
@@ -56,7 +57,6 @@ class OptionsFlowHandler(OptionsFlow):
             errors = {}
             DATA_SCHEMA = vol.Schema({
                 vol.Optional("find_api_url", default=options.get('find_api_url', '')): str,
-                vol.Optional("mpd_host", default=options.get('mpd_host', '')): str,
                 vol.Optional("user", default=options.get('user', '')): str,
                 vol.Optional("password", default=options.get('password', '')): str,
                 vol.Optional("tts_before_message", default=options.get('tts_before_message', '')): str,
@@ -66,5 +66,5 @@ class OptionsFlowHandler(OptionsFlow):
             })
             return self.async_show_form(step_id="user", data_schema=DATA_SCHEMA, errors=errors)
         # 选项更新
-        user_input['find_api_url'] = user_input['find_api_url'].strip('/')
+            user_input['find_api_url'] = user_input['find_api_url'].strip('/')
         return self.async_create_entry(title=DOMAIN, data=user_input)
