@@ -1,4 +1,8 @@
-import os, hashlib, asyncio, threading, time, json, urllib, mutagen, edgeTTS
+import os, hashlib, asyncio, threading, time, json, urllib, mutagen
+try:
+    from edge_tts import Communicate
+except (ImportError, ModuleNotFoundError):
+    from edgeTTS import Communicate
 from mutagen.mp3 import MP3
 from homeassistant.helpers.network import get_url
 from homeassistant.helpers import template
@@ -101,7 +105,7 @@ class ApiTTS():
 
     # 获取TTS文件
     async def write_tts_file(self, ob_name, voice, text):
-        communicate = edgeTTS.Communicate()
+        communicate = Communicate()
         lang = 'zh-CN'
         message = text
         xml = '<speak version="1.0"' \
