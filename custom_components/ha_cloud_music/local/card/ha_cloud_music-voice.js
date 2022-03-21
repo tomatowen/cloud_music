@@ -175,7 +175,7 @@ class HaCloudMusicVoice extends HTMLElement {
             div.innerHTML = `<div><span>${value}</span></div><button data-cmd="${value}">😘</button>`
             $(".list").insertBefore(div, $('.list>div'))
 
-            ha_cloud_music.hass.callApi('POST', 'events/ha_voice_text_event', { text: value }).then(res => {
+            ha_cloud_music.hass.callApi('POST', 'events/conversation', { text: value }).then(res => {
                 ha_cloud_music.toast("命令发送成功")
             })
         }
@@ -207,7 +207,7 @@ class HaCloudMusicVoice extends HTMLElement {
             const ele = path[0]
             if ('cmd' in ele.dataset) {
                 let text = ele.dataset['cmd']
-                ha_cloud_music.hass.callApi('POST', 'events/ha_voice_text_event', { text }).then(res => {
+                ha_cloud_music.hass.callApi('POST', 'events/conversation', { text }).then(res => {
                     ha_cloud_music.toast("命令发送成功")
                 })
             }
