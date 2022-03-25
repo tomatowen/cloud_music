@@ -117,7 +117,7 @@ class ApiMusic():
                 searchObj = re.search(r'\(|（|：|:《', songName, re.M|re.I)
                 if searchObj:
                     keywords = songName
-                else:    
+                else:
                     keywords = songName + ' - '+ singerName
                 obj = await fetch_json(self.find_api_url + "/api/search?key=" + keywords)
                 if obj is not None and obj['code'] == 0:
@@ -155,8 +155,9 @@ class ApiMusic():
             obj = await fetch_json(self.find_api_url + "/api/search?key=" + name)
             if obj is not None and obj['code'] == 0:
                 item = obj['data']
-                _list.append({
-                    "search_source": item['source'],
+                source = item['source']
+                play_item = {
+                    "search_source": source,
                     "id": item['id'],
                     "name": item['name'],
                     "album": item['album'],
@@ -165,7 +166,11 @@ class ApiMusic():
                     "url": item['purl'],
                     "song": item['name'],
                     "singer": item['singer']
-                })
+                }
+                # 判断来源是否互联网
+                if source == 'internet':
+                    play_item['type'] = 'url'
+                _list.append(play_item)
                 return _list
 
         # 搜索网易云音乐
