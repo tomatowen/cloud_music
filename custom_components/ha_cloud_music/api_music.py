@@ -73,8 +73,7 @@ class ApiMusic():
 
                     result = await resp.json()
         except Exception as e:
-            self.media.notify('接口出现异常，请确定音乐接口服务是否正常运行', "error")
-            self.log('【接口出现异常】' + link, e)
+            self.media.notify(f'【接口出现异常】【{link}】{e}', "error")
         return result
     
     async def proxy_get(self, url):

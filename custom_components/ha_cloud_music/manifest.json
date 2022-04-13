@@ -6,7 +6,7 @@
   "documentation": "https://github.com/shaonianzhentan/ha_cloud_music",
   "requirements": [
     "mutagen>=1.45.1",
-    "python-mpd2>=3.0.4",
+    "python-mpd2>=3.0.5",
     "python-vlc>=1.1.2",
     "edge-tts>=4.0.3"
   ],
