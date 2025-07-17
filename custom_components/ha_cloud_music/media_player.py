@@ -1,8 +1,9 @@
 import json, os, logging, time, datetime, random, re, uuid, math, base64, asyncio, aiohttp
 from homeassistant.components.media_player import MediaPlayerEntity
 from homeassistant.helpers.network import get_url
+from homeassistant.components.media_player import MediaType
 from homeassistant.components.media_player.const import (
-    MEDIA_TYPE_MUSIC,MEDIA_TYPE_URL, SUPPORT_PAUSE, SUPPORT_PLAY, SUPPORT_BROWSE_MEDIA, 
+    SUPPORT_PAUSE, SUPPORT_PLAY, SUPPORT_BROWSE_MEDIA, 
     SUPPORT_NEXT_TRACK, SUPPORT_PREVIOUS_TRACK, SUPPORT_TURN_ON, SUPPORT_TURN_OFF, SUPPORT_STOP,
     SUPPORT_PLAY_MEDIA, SUPPORT_VOLUME_MUTE, SUPPORT_VOLUME_SET, SUPPORT_SELECT_SOURCE, SUPPORT_CLEAR_PLAYLIST, 
     SUPPORT_SELECT_SOUND_MODE, SUPPORT_SEEK, SUPPORT_VOLUME_STEP)
@@ -215,7 +216,7 @@ class MediaPlayer(MediaPlayerEntity):
 
     @property
     def media_content_type(self):
-        return MEDIA_TYPE_MUSIC
+        return MediaType.MUSIC
 
     @property
     def state_attributes(self):
@@ -402,7 +403,7 @@ class MediaPlayer(MediaPlayerEntity):
         is_bind_source_list = False
         # 播放媒体URL文件
         self.log('【播放列表类型】：%s', media_type)
-        if media_type == MEDIA_TYPE_MUSIC:
+        if media_type == MediaType.MUSIC:
             url = media_id
         elif media_type == 'music_load':                    
             self.music_index = int(media_id)
@@ -410,7 +411,7 @@ class MediaPlayer(MediaPlayerEntity):
             url = await self.get_url(music_info)
             # 保存音乐播放列表到本地
             self.api_config.set_playlist(self)
-        elif media_type == MEDIA_TYPE_URL:
+        elif media_type == MediaType.URL:
             self.log('加载播放列表链接：%s', media_id)
             play_list = await self.api_music.proxy_get(media_id)
             self.music_playlist = play_list
