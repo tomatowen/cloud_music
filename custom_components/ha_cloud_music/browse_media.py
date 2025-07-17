@@ -2,53 +2,33 @@
 import logging, os
 from homeassistant.helpers.network import get_url
 from homeassistant.components.media_player import BrowseError, BrowseMedia
-from homeassistant.components.media_player.const import (
-    MEDIA_CLASS_ALBUM,
-    MEDIA_CLASS_ARTIST,
-    MEDIA_CLASS_CHANNEL,
-    MEDIA_CLASS_DIRECTORY,
-    MEDIA_CLASS_EPISODE,
-    MEDIA_CLASS_MOVIE,
-    MEDIA_CLASS_MUSIC,
-    MEDIA_CLASS_PLAYLIST,
-    MEDIA_CLASS_SEASON,
-    MEDIA_CLASS_TRACK,
-    MEDIA_CLASS_TV_SHOW,
-    MEDIA_TYPE_ALBUM,
-    MEDIA_TYPE_ARTIST,
-    MEDIA_TYPE_CHANNEL,
-    MEDIA_TYPE_EPISODE,
-    MEDIA_TYPE_MOVIE,
-    MEDIA_TYPE_PLAYLIST,
-    MEDIA_TYPE_SEASON,
-    MEDIA_TYPE_TRACK,
-    MEDIA_TYPE_TVSHOW,
-)
+from homeassistant.components.media_player import MediaType
+from homeassistant.components.media_player import MediaClass
 
 PLAYABLE_MEDIA_TYPES = [
-    MEDIA_TYPE_ALBUM,
-    MEDIA_TYPE_ARTIST,
-    MEDIA_TYPE_TRACK,
+    MediaType.ALBUM,
+    MediaType.ARTIST,
+    MediaType.TRACK,
 ]
 
 CONTAINER_TYPES_SPECIFIC_MEDIA_CLASS = {
-    MEDIA_TYPE_ALBUM: MEDIA_CLASS_ALBUM,
-    MEDIA_TYPE_ARTIST: MEDIA_CLASS_ARTIST,
-    MEDIA_TYPE_PLAYLIST: MEDIA_CLASS_PLAYLIST,
-    MEDIA_TYPE_SEASON: MEDIA_CLASS_SEASON,
-    MEDIA_TYPE_TVSHOW: MEDIA_CLASS_TV_SHOW,
+    MediaType.ALBUM: MediaClass.ALBUM,
+    MediaType.ARTIST: MediaClass.ARTIST,
+    MediaType.PLAYLIST: MediaClass.PLAYLIST,
+    MediaType.SEASON: MediaClass.SEASON,
+    MediaType.TVSHOW: MediaClass.TV_SHOW,
 }
 
 CHILD_TYPE_MEDIA_CLASS = {
-    MEDIA_TYPE_SEASON: MEDIA_CLASS_SEASON,
-    MEDIA_TYPE_ALBUM: MEDIA_CLASS_ALBUM,
-    MEDIA_TYPE_ARTIST: MEDIA_CLASS_ARTIST,
-    MEDIA_TYPE_MOVIE: MEDIA_CLASS_MOVIE,
-    MEDIA_TYPE_PLAYLIST: MEDIA_CLASS_PLAYLIST,
-    MEDIA_TYPE_TRACK: MEDIA_CLASS_TRACK,
-    MEDIA_TYPE_TVSHOW: MEDIA_CLASS_TV_SHOW,
-    MEDIA_TYPE_CHANNEL: MEDIA_CLASS_CHANNEL,
-    MEDIA_TYPE_EPISODE: MEDIA_CLASS_EPISODE,
+    MediaType.SEASON: MediaClass.SEASON,
+    MediaType.ALBUM: MediaClass.ALBUM,
+    MediaType.ARTIST: MediaClass.ARTIST,
+    MediaType.MOVIE: MediaClass.MOVIE,
+    MediaType.PLAYLIST: MediaClass.PLAYLIST,
+    MediaType.TRACK: MediaClass.TRACK,
+    MediaType.TVSHOW: MediaClass.TV_SHOW,
+    MediaType.CHANNEL: MediaClass.CHANNEL,
+    MediaType.EPISODE: MediaClass.EPISODE,
 }
 
 _LOGGER = logging.getLogger(__name__)
@@ -67,7 +47,7 @@ async def build_item_response(media_library, payload):
     thumbnail = None
     title = None
     media = None    
-    media_class = MEDIA_CLASS_DIRECTORY
+    media_class = MediaClass.DIRECTORY
     can_play = False
     can_expand = True
     children = []
@@ -86,7 +66,7 @@ async def build_item_response(media_library, payload):
                 }, media_library))
 
         title = search_type.replace('library_', '')
-        media_class = MEDIA_CLASS_MUSIC
+        media_class = MediaClass.MUSIC
         can_play = True
         can_expand = False
 
@@ -102,7 +82,7 @@ async def build_item_response(media_library, payload):
     )
 
     if is_library:
-        response.children_media_class = MEDIA_CLASS_MUSIC
+        response.children_media_class = MediaClass.MUSIC
     else:
         response.calculate_children_class()
 
@@ -117,13 +97,13 @@ def item_payload(item, media_library):
 
     if "songid" in item:
         # 音乐
-        media_class = MEDIA_CLASS_MUSIC
+        media_class = MediaClass.MUSIC
         media_content_id = f"{item['songid']}"
         can_play = True
         can_expand = False
     else:
         # 目录
-        media_class = MEDIA_CLASS_DIRECTORY       
+        media_class = MediaClass.DIRECTORY       
         media_content_id = ""
         can_play = False
         can_expand = True
@@ -143,7 +123,7 @@ def library_payload(media_library):
     创建音乐库
     """
     library_info = BrowseMedia(
-        media_class=MEDIA_CLASS_DIRECTORY,
+        media_class=MediaClass.DIRECTORY,
         media_content_id="library",
         media_content_type="library",
         title="Media Library",
